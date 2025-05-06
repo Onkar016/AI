@@ -1,76 +1,44 @@
-# Knowledge Base
-positive_criteria = {
-    "exceeds_deadlines": 5,
-    "high_quality_work": 4,
-    "great_team_player": 3,
-    "consistently_improves": 2,
-    "excellent_communication": 1,
-}
+# Implement any one of the following Expert System
+# IV. Employee performance evaluation
 
-negative_criteria = {
-    "misses_deadlines": -5,
-    "poor_quality_work": -4,
-    "poor_team_player": -3,
-    "resistant_to_feedback": -2,
-    "poor_communication": -1,
-}
+# List of evaluation criteria
+criteria = ["productivity", "communication", "teamwork", "punctuality", "quality_of_work"]
 
-# Normalize keys for case-insensitive matching
-positive_criteria = {k.lower(): v for k, v in positive_criteria.items()}
-negative_criteria = {k.lower(): v for k, v in negative_criteria.items()}
-
-# Rule engine
-def evaluate_employee(positives, negatives):
-    score = 0
-    for pos in positives:
-        score += positive_criteria.get(pos, 0)
-    for neg in negatives:
-        score += negative_criteria.get(neg, 0)
-    return score
-
-def display_criteria(criteria, title):
-    print(f"\n{title}")
-    print("-" * len(title))
-    for criterion in criteria:
-        print(f"- {criterion}")
-    print()
-
-def get_validated_input(prompt, valid_criteria):
-    while True:
-        raw_input = input(prompt).lower()
-        entries = [item.strip() for item in raw_input.split(",") if item.strip()]
-        invalid = [item for item in entries if item not in valid_criteria]
-        if invalid:
-            print(f"\n❌ Invalid entries: {', '.join(invalid)}")
-            print("Please enter valid criteria from the list.\n")
-            continue
-        return entries
-
-# User interface
-def user_interface():
-    print("🧾 Employee Performance Evaluation System")
-
-    display_criteria(positive_criteria, "Positive Criteria")
-    positives = get_validated_input("Enter positive criteria (comma-separated): ", positive_criteria)
-
-    display_criteria(negative_criteria, "Negative Criteria")
-    negatives = get_validated_input("Enter negative criteria (comma-separated): ", negative_criteria)
-
-    score = evaluate_employee(positives, negatives)
-    print(f"\n✅ Employee Score: {score}")
-
-    # Performance rating
-    if score > 10:
-        performance = "🌟 Outstanding"
-    elif score > 5:
-        performance = "👍 Good"
-    elif score > 0:
-        performance = "👌 Satisfactory"
+# Function to get rank input from the user (from -5 to 5)
+def get_rank_input(criterion):
+    rank = int(input(f"Enter rank for {criterion} (-5 to 5): "))
+    if -5 <= rank <= 5:
+        return rank
     else:
-        performance = "⚠️ Needs Improvement"
+        print("Invalid input. Please enter an integer between -5 and 5.")
+    return get_rank_input(criterion)
 
-    print(f"Performance: {performance}")
+# Function to evaluate total score
+def evaluate_employee(ranks):
+    return sum(ranks.values())
 
-# Run
-if __name__ == "__main__":
-    user_interface()
+# Main function
+def main():
+    ranks = {}
+    for criterion in criteria:
+        ranks[criterion] = get_rank_input(criterion)
+
+    score = evaluate_employee(ranks)
+    print(f"\nTotal Score: {score}")
+
+    if score > 15:
+        print("Performance: Exceptional")
+    elif score > 10:
+        print("Performance: Outstanding")
+    elif score > 0:
+        print("Performance: Good")
+    elif score == 0:
+        print("Performance: Neutral")
+    elif score >= -10:
+        print("Performance: Needs Improvement")
+    elif score >= -15:
+        print("Performance: Poor")
+    else:
+        print("Performance: Critical - Immediate Action Needed")
+
+main()
